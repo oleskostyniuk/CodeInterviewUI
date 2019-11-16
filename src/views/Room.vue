@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 export default {
 	name: 'room',
@@ -17,24 +17,24 @@ export default {
 		socket: null
 	}),
 	methods: {
-		initSocketConnection: function() {
-			let socket = io.connect('http://localhost:3000');
+		// initSocketConnection: function() {
+		// 	let socket = io.connect('http://localhost:3000');
 			
-			socket.on('connect', function (data) {
+		// 	socket.on('connect', function (data) {
 				
-			});
+		// 	});
 
-			socket.on('connect', function (data) {
+		// 	socket.on('connect', function (data) {
 				
-			});
+		// 	});
 
-			socket.on('connect', function (data) {
+		// 	socket.on('connect', function (data) {
 				
-			});
-		}
+		// 	});
+		// }
 	},
 	created() {
-		this.initSocketConnection();
+		// this.initSocketConnection();
 	}
 }
 </script>

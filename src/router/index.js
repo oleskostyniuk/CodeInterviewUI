@@ -1,14 +1,20 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Auth from '../views/Auth.vue';
-
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: () => (import('../views/Home.vue'))
+    component: () => (import('../views/Home.vue')),
+    beforeEnter: (to, from, next) => {
+      let isLogged = localStorage.getItem('user');
+      if(!isLogged) {
+        router.push({name: 'auth'})
+      } 
+      next(); 
+    }
   },
   {
     path: '/room',
@@ -18,7 +24,13 @@ const routes = [
   {
     path: '/auth',
     name: 'auth',
-    component: Auth
+    component: Auth,
+    
+  },
+  {
+    path: '/registration',
+    name: 'reg',
+    component: () => (import('../views/Registration.vue'))
   },
   // {
   //   path: '/auth',
@@ -32,5 +44,7 @@ const router = new VueRouter({
   // base: process.env.BASE_URL,
   routes
 });
+
+
 
 export default router;
