@@ -1,0 +1,31 @@
+<template>
+  <v-app>
+    <router-view></router-view>
+  </v-app>
+</template>
+
+<script>
+export default {
+  name: 'App',
+  data: () => ({
+    //
+  }),
+};
+</script>
+
+<style>
+.w-100 {
+  width: 100%;
+}
+.w-50{
+  width: 50%;
+}
+.w-25{
+  width: 25%;
+}
+.h-100{
+  height: 100vh;
+}
+
+
+</style>
