@@ -3,7 +3,6 @@ import Vue from 'vue';
 const state = {
 	currentUser: {},
 	token: null,
-	messages: []
 };
 
 
@@ -23,18 +22,15 @@ const mutations = {
 		state.currentUser = {};
 		state.token = null;
 	},
-	'ADD_MESSAGE': function(state, err) {
-		state.messages.push(err);
-		console.log(err);
-	}
 };
 
 const actions = {
 	logIn: function({commit, dispatch} ,{ email, password }) {
-		axios.post('/users/auth', { email, password })
+		return axios.post('/users/auth', { email, password })
 			.then(res => {
 				commit('LOG_IN_USER', res.data);
 				dispatch('getMe');
+				return true;
 			})
 			.catch(() => {});
 	},
@@ -51,7 +47,7 @@ const actions = {
 	logOut: function({commit}) {
 		commit('LOG_OUT');
 	},
-	registration: function({commit}, form) {
+	registration: function(context, form) {
 		return axios.post('/users/register', {
 			email: form.email,
 			password: form.password,
@@ -60,9 +56,7 @@ const actions = {
 			company: form.company
 		}).then(res => {
 			return res.data;
-		}).catch(err => {
-			commit('ADD_MESSAGE', err);
-		});
+		}).catch(() => {});
 	}
 };
 

@@ -1,13 +1,16 @@
 <template>
   <div class="grey darken-3 h-100">
     <app-navbar></app-navbar>
+    <app-create-room v-if="false"></app-create-room>
+    <app-create-task v-if="isNewTask" @close='isNewTask = false'></app-create-task>
+
     <v-container>
       <v-layout>
-        <v-flex xs12>
-          <span class="w-100 text-center">Hello world</span>
-          <app-create-room></app-create-room>
-          <app-create-task></app-create-task>
-          <app-task-list></app-task-list>
+        <v-flex xs6>
+          <v-card dark class="pa-2">
+            <app-task-list></app-task-list>
+            <v-btn class="d-block ml-auto" color="success" @click="isNewTask = true">Create new task</v-btn>
+          </v-card>
         </v-flex> 
       </v-layout>
     </v-container>
@@ -23,6 +26,9 @@ import createRoom from '../components/app-room-create.vue';
 
 export default {
   name: 'home',
+  data: () => ({
+    isNewTask: false
+  }),
   components: {
     'app-navbar': navBar,
     'app-create-task': createTask,
