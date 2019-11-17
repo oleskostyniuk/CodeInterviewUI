@@ -4,15 +4,15 @@
 			<v-card class="w-25 blue-grey darken-4 px-3 pb-3" dark >
 					<div class="text-center title mt-2 mb-3">Sign In</div>		
 					
-					<v-text-field solo placeholder="Login" prepend-inner-icon="mdi-account" v-model="loginForm.login"
-						:error-messages="errors.login" @input="errors.login = ''"></v-text-field>		
+					<v-text-field solo placeholder="Email" prepend-inner-icon="mdi-account" v-model="loginForm.email"
+						:error-messages="errors.email" @input="errors.email = ''"></v-text-field>		
 
 					<v-text-field solo placeholder="Password" type="password" prepend-inner-icon="mdi-lock"
 						:error-messages="errors.password" @input="errors.password = ''" v-model="loginForm.password"></v-text-field>		
 			
 					<div class="w-100 mt-2 text-center">
 						<span>Don't have acoount yet?</span><br>
-						<router-link :to="{ name: 'registration'}">Sign Up</router-link>
+						<router-link :to="{ name: 'reg'}">Sign Up</router-link>
 						<v-btn class="d-flex mx-auto w-25 mt-2" @click="doLogin">LOGIN</v-btn>
 					</div>
 			</v-card>
@@ -25,16 +25,16 @@ export default {
 	name: 'auth',
 	data: () => ({
 		loginForm: {
-			login: '',
+			email: '',
 			password: ''
 		},
-		errors: { login: '', password: ''}
+		errors: { email: '', password: ''}
 	}),
 	methods: {
 		validate: function() {
 			let errors = {};
-			if(this.loginForm.login.length < 1) {
-				errors.login = 'Enter Login';
+			if(this.loginForm.email.length < 1) {
+				errors.email = 'Enter email';
 			}
 			if(this.loginForm.password.length < 1) {
 				errors.password = 'Enter password';
@@ -48,16 +48,16 @@ export default {
 		},
 		doLogin: function() {
 			if(this.validate()) {
-				this.$store.dispatch('logIn', {"login": this.loginForm.login, "password": this.loginForm.password })
+				let self = this;
+				this.$store.dispatch('logIn', {"email": this.loginForm.email, "password": this.loginForm.password })
 					.then(() => {
-						this.$router.push({name: 'home'});
+						if(self.$store.state.auth.token) {
+							self.$router.push({name: 'home'});
+						}
 					});
 			}
 		},
 		created() {
-			if(this.$store.state.token) {
-				this.$router.push({name: 'home'});
-			}
 		}
 	}
 }

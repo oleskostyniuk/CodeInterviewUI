@@ -1,11 +1,9 @@
-import Axios from 'axios';
-const axios = Axios.create({
-  baseURL: 'http://localhost:3000'
-});
-
+import axios from '../axios.js';
+import Vue from 'vue';
 const state = {
 	currentUser: {},
-	token: null
+	token: null,
+	messages: []
 };
 
 
@@ -19,27 +17,29 @@ const mutations = {
 		state.token = token;
 	},
 	'SET_ME': function(state, me) {
-		this.state.currentUser = me;
+		Vue.set(state, 'currentUser', me);
 	},
 	'LOG_OUT': function(state) {
 		state.currentUser = {};
 		state.token = null;
+	},
+	'ADD_MESSAGE': function(state, err) {
+		state.messages.push(err);
+		console.log(err);
 	}
 };
 
 const actions = {
-	logIn: function({commit, dispatch} ,{ login, password }) {
-		return axios.post('/users/auth', { email: login, password })
+	logIn: function({commit, dispatch} ,{ email, password }) {
+		axios.post('/users/auth', { email, password })
 			.then(res => {
 				commit('LOG_IN_USER', res.data);
 				dispatch('getMe');
 			})
-			.catch(err => {
-				console.log(err.message);
-			});
+			.catch(() => {});
 	},
 	getMe: function(context) {
-			return axios.get('/users/me', { headers: {'x-auth-token': context.state.token}})
+			axios.get('/users/me', { headers: {'x-auth-token': context.state.token}})
 				.then(res => {
 					context.commit('SET_ME', res.data);
 				})
@@ -50,11 +50,25 @@ const actions = {
 	},
 	logOut: function({commit}) {
 		commit('LOG_OUT');
+	},
+	registration: function({commit}, form) {
+		return axios.post('/users/register', {
+			email: form.email,
+			password: form.password,
+			firstName: form.firstName,
+			lastName: form.lastName,
+			company: form.company
+		}).then(res => {
+			return res.data;
+		}).catch(err => {
+			commit('ADD_MESSAGE', err);
+		});
 	}
 };
+
 
 export default {
 	state,
 	mutations,
-	actions,
+	actions
 };

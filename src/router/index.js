@@ -25,12 +25,26 @@ const routes = [
     path: '/auth',
     name: 'auth',
     component: Auth,
+    beforeEnter: (to, from, next) => {
+      let isLogged = localStorage.getItem('user');
+      if(isLogged) {
+        router.push({name: 'home'})
+      } 
+      next(); 
+    }
     
   },
   {
     path: '/registration',
     name: 'reg',
-    component: () => (import('../views/Registration.vue'))
+    component: () => (import('../views/Registration.vue')),
+    beforeEnter: (to, from, next) => {
+      let isLogged = localStorage.getItem('user');
+      if(isLogged) {
+        router.push({name: 'home'})
+      } 
+      next(); 
+    }
   },
   // {
   //   path: '/auth',

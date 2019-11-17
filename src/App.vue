@@ -1,12 +1,17 @@
 <template>
   <v-app>
+    <app-global-messages></app-global-messages>
     <router-view></router-view>
   </v-app>
 </template>
 
 <script>
+import globalMessage from './components/app-global-error.vue';
 export default {
   name: 'App',
+  components:{
+    'app-global-messages': globalMessage
+  },
   data: () => ({
     //
   }),

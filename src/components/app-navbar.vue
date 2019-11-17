@@ -23,7 +23,7 @@
 					<v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
 				</template>
 				<div class="menu-dropdown">
-					<v-card v-if="getUser" dark class="pa-2 nav-menu">
+					<v-card dark class="pa-2 nav-menu">
 						<v-icon class="mr-1">mdi-account</v-icon>{{ fullName }}
 						<v-divider class="my-2"></v-divider>
 						<v-btn small class="d-block ml-auto" @click="logOut">LogOut<v-icon class="ml-1" small>mdi-login-variant</v-icon></v-btn> 
@@ -34,18 +34,18 @@
     </v-app-bar>
   </div>
 </template>
+
 <script>
+import { mapState } from 'vuex';
+
 export default {
+
 	computed: {
-		getUser: {
-			get() {
-				return this.$store.state.currentUser;
-			}
-		},
-		fullName: {
-			get() {
-				return this.getUser.firstName + ' ' + this.getUser.lastName;
-			}
+		...mapState({
+			getUser: state => state.auth.currentUser
+    }),
+		fullName() {
+			return this.getUser ? this.getUser.firstName + ' ' + this.getUser.lastName : '';
 		}
 	},
 	methods: {
