@@ -1,5 +1,5 @@
 <template>
-	<v-dialog v-model="showModal" width="1000">
+	<v-dialog persistent v-model="showModal" width="1000">
 		<v-card dark>
 			<v-row class="mx-0">
 				<v-flex xs5 class="pa-4">

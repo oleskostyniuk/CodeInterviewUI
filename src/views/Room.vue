@@ -1,22 +1,43 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex xs12>
-        <span class="w-100 text-center">Hello world</span>
+  <v-card dark>
+		<app-toolbar></app-toolbar>
+    <v-layout class="room">
+      <v-flex xs6>
+				<app-code-editor width="100%"
+					height="calc(100vh - 64px)"
+					theme="vs-dark"
+					language="javascript"
+					:options="options"
+					@change="onChange"></app-code-editor>
       </v-flex>
+			<v-flex xs6>
+				<v-card flat class="mx-2 mt-3">
+					<div class="pa-2 grey darken-4">TASK</div>
+				</v-card>
+			</v-flex>
     </v-layout>
-  </v-container>
+  </v-card>
 </template>
 
 <script>
 // import io from 'socket.io-client';
-
+import monacoEditor from 'monaco-editor-vue';
+import roomToolbar from '../components/app-navbar';
 export default {
 	name: 'room',
 	data: () => ({
-		socket: null
+		socket: null,
+		options: {
+		}
 	}),
+	components: {
+		'app-code-editor': monacoEditor,
+		'app-toolbar': roomToolbar
+	},
 	methods: {
+		onChange(value) {
+			console.log(value);
+		}
 		// initSocketConnection: function() {
 		// 	let socket = io.connect('http://localhost:3000');
 			
@@ -38,3 +59,9 @@ export default {
 	}
 }
 </script>
+
+<style scoped>
+.room{
+	height: calc(100vh - 64px);
+}
+</style>

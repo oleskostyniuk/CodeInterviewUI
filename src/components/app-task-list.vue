@@ -1,15 +1,15 @@
 <template>
 	<v-card flat>
 
-<v-tabs v-model="tab" centered dark>
-      <v-tab>
-        My
-      </v-tab>
+		<v-tabs v-model="tab" centered dark>
+					<v-tab>
+						My
+					</v-tab>
 
-      <v-tab>
-        Public
-      </v-tab>
-</v-tabs>
+					<v-tab>
+						Public
+					</v-tab>
+		</v-tabs>
 
     <v-tabs-items dark v-model="tab">
       <v-tab-item>
