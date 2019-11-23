@@ -2,7 +2,7 @@ import Axios from 'axios';
 import store from './index';
 
 const axios = Axios.create({
-  baseURL: 'http://localhost:3000'
+  baseURL: 'http://192.168.1.121:3000'
 });
 
 const errorHandler = (error) => {

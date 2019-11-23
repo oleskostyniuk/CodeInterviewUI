@@ -1,6 +1,6 @@
 <template>
 	<div class="global-error-wrap">
-		<v-alert max-width="50vw" :type="message.type"
+		<v-alert dense max-width="50vw" :type="message.type"
 			v-for="(message, index) in getMessages" :key="index">{{message.text}}
 				<template v-slot:close>
 					<v-icon class="ml-1" @click="deleteMessage(index)">mdi-close</v-icon>
