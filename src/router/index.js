@@ -19,7 +19,17 @@ const routes = [
   {
     path: '/room',
     name: 'room',
-    component: () => (import('../views/Room.vue'))
+    component: () => (import('../views/Room.vue')),
+    beforeEnter: (to, from, next) => {
+      let isLogged = localStorage.getItem('user');
+      if(!isLogged) {
+        let urlParam = location.search;
+        if(urlParam.length === 0) {
+          router.push({name: 'auth'})
+        }
+      } 
+      next(); 
+    }
   },
   {
     path: '/auth',

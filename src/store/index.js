@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     globalMessages: [],
     serverUrl: 'http://192.168.1.121:3000'
+    // serverUrl: 'http://192.168.43.243:3000'
   },
   mutations: {
     'ADD_GLOBAL_MESSAGE': function(state, message) {
@@ -18,7 +19,6 @@ export default new Vuex.Store({
     'DELETE_GLOBAL_MESSAGE': function(state, msgIndex) {
       state.globalMessages.splice(msgIndex, 1);
     }
-
   },
   actions: {
     addGlobalMessage({state, commit}, message) {

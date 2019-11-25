@@ -1,21 +1,16 @@
 <template>
 <div>
-  <div class="webRTC">
-    <video 
+  <div class="webRTC" v-show="call">
+    <video  
       id="local_video" 
       playsinline 
-      autoplay 
+      autoplay class="ml-auto"
       muted></video>
     <video 
       id="remoteVideo" 
-      playsinline 
-      autoplay></video>
+      playsinline class="ml-2"
+      autoplay muted></video>
   </div>
-  
-  <v-btn @click="startCall" 
-          small 
-          v-if="peerConnection && peerConnection.id !== 123" 
-          class="primary ml-auto mt-2">Call</v-btn>
 </div>
   
 </template>
@@ -33,19 +28,20 @@ export default {
     }
   },
   sockets: {
-      
+      'start-video': function() {
+        this.startCall();
+      } 
   },
   methods: {
-    startCall: function() {
-      let dataConnection = this.peerConnection.connect('123');
-      console.log(dataConnection);
-      this.call = this.peerConnection.call('123', this.localStream)
+    startCall: async function() {
+      let peerId = location.search.slice(1);
+      this.peerConnection.connect(peerId);
+      this.call = await this.peerConnection.call(peerId, this.localStream)
       this.call.on('stream', function(stream) {
         document.getElementById("remoteVideo").srcObject = stream;
+        this.remoteStream = stream;
       });
-      console.log(this.call);
     },
-  
     initConnection: function() {
       const self = this;
       navigator.mediaDevices.getUserMedia({ audio: true, video: true })
@@ -61,15 +57,13 @@ export default {
   },
 
   created () {
-    this.initConnection();
     let Peer = window.peerjs.Peer;
-    let urlParam = location.search;
-    if(urlParam.length === 0) {
-      this.peerConnection = new Peer(); 
+    this.initConnection();
+    if(this.$store.state.auth.currentUser._id) {
+      this.peerConnection = new Peer([this.$store.state.auth.currentUser._id]); 
     } else {
-      this.peerConnection = new Peer([123]);  
+      this.peerConnection = new Peer();
     }
-    
     this.peerConnection.on('call', call => {
       call.answer(this.localStream);
       this.call = call;
@@ -84,12 +78,10 @@ export default {
 <style>
 .webRTC{
   display: flex;
-  width: 100%;
-  justify-content: space-around;
+  width: fit-content;
 }  
 .webRTC > video {
   display: flex;
-  max-width: 50%;
-  max-height: 200px;
+  max-width: 25%;
 }
 </style>

@@ -35,10 +35,12 @@ const actions = {
 			.catch(() => {});
 	},
 	getMe: function(context) {
-			axios.get('/users/me', { headers: {'x-auth-token': context.state.token}})
-				.then(res => {
-					context.commit('SET_ME', res.data);
-				})
+		if(context.state.token) {
+			return axios.get('/users/me', { headers: {'x-auth-token': context.state.token}})
+			.then(res => {
+				context.commit('SET_ME', res.data);
+			})
+		}
 	},
 	reLogUser: function({commit, dispatch}, jwt) {
 		commit('RELOG_USER', jwt.userJwt);

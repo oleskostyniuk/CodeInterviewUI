@@ -69,7 +69,7 @@ export default {
 	},
 	methods: {
 		show(item) {
-			console.log(item)
+			console.log(item);
 		},
 		getTasks() {
 			this.$store.dispatch('getTasks')

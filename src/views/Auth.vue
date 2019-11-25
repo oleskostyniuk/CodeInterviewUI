@@ -51,7 +51,6 @@ export default {
 				let self = this;
 				this.$store.dispatch('logIn', {"email": this.loginForm.email, "password": this.loginForm.password })
 					.then(res => {
-						debugger;
 						if(res) {
 							self.$router.push({name: 'home'});
 						}
