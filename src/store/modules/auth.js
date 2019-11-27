@@ -9,7 +9,7 @@ const state = {
 const mutations = {
 	'LOG_IN_USER': function(state, userJwt) {
 		state.token = userJwt;
-		let user = {userJwt, expirationDate: new Date().getTime() + 1000*60*30 }
+		let user = {userJwt, expirationDate: new Date().getTime() + 1000*60*60*24 }
 		localStorage.setItem('user', JSON.stringify(user));
 	},
 	'RELOG_USER': function(state, token) {
@@ -39,6 +39,7 @@ const actions = {
 			return axios.get('/users/me', { headers: {'x-auth-token': context.state.token}})
 			.then(res => {
 				context.commit('SET_ME', res.data);
+				return res.data._id;
 			})
 		}
 	},

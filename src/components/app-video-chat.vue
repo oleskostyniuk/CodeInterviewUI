@@ -1,22 +1,30 @@
 <template>
 <div>
-  <div class="webRTC" v-show="call">
-    <video  
+  <div class="webRTC d-flex">
+    <div class="webRTC_video d-flex">
+      <div class="no-video" v-show="!localStream">
+
+      </div>
+      <video  
       id="local_video" 
       playsinline 
-      autoplay class="ml-auto"
+      autoplay
       muted></video>
-    <video 
-      id="remoteVideo" 
-      playsinline class="ml-2"
-      autoplay muted></video>
+    </div>
+
+    <div class="webRTC_video d-flex">
+      <video v-show="remoteStream"
+        id="remoteVideo" 
+        playsinline class="ml-2"
+        autoplay muted></video>
+        <div class="no-video" v-if="!remoteStream"></div>
+    </div>
   </div>
 </div>
   
 </template>
 
 <script>
-
 export default {
   name: 'webRTC',
   data: function () {
@@ -30,16 +38,22 @@ export default {
   sockets: {
       'start-video': function() {
         this.startCall();
+      },
+      'end-video': function() {
+        debugger
+        this.peerConnection.disconnect();
+        this.endConnection();
       } 
   },
   methods: {
     startCall: async function() {
+      const self = this;
       let peerId = location.search.slice(1);
       this.peerConnection.connect(peerId);
       this.call = await this.peerConnection.call(peerId, this.localStream)
       this.call.on('stream', function(stream) {
         document.getElementById("remoteVideo").srcObject = stream;
-        this.remoteStream = stream;
+        self.remoteStream = stream;
       });
     },
     initConnection: function() {
@@ -53,6 +67,15 @@ export default {
     },
     handleError: function(err) {
       this.$store.dispatch('addGlobalMessage', {text: err.message, type: 'error'});
+    },
+    endConnection: function() {
+      this.call = null;
+      document.getElementById("local_video").pause;
+      document.getElementById("remoteVideo").pause;
+      document.getElementById("local_video").srcObject = null;
+      document.getElementById("remoteVideo").srcObject = null;
+      if(this.localStream) this.localStream.getTracks()[0].stop();
+      if(this.remoteStream) this.remoteStream.getTracks()[0].stop();
     }
   },
 
@@ -71,6 +94,10 @@ export default {
         document.getElementById("remoteVideo").srcObject = stream;
       });
     });
+    // this.peerConnection.on('close', () => {
+    //   this.peerConnection.disconnect();
+    //   this.endConnection();
+    // });
   }
 }
 </script>  
@@ -78,10 +105,17 @@ export default {
 <style>
 .webRTC{
   display: flex;
-  width: fit-content;
+  width: 100%;
+  justify-content: flex-end;
 }  
-.webRTC > video {
+.webRTC_video > video {
   display: flex;
   max-width: 25%;
+}
+.webRTC_video > .no-video {
+  display: flex;
+  width: 25%;
+  height: 100%;
+  background: #000000;
 }
 </style>

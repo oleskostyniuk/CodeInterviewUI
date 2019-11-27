@@ -15,7 +15,6 @@
         <v-flex>
           <v-btn class="ma-auto d-block" @click="createRoom = true">Start Interview</v-btn>
 
-          <app-cmp></app-cmp>
 
         </v-flex>
       </v-layout>
@@ -30,7 +29,6 @@ import taskList from '../components/app-task-list.vue';
 import createTask from '../components/app-task-create.vue';
 import createRoom from '../components/app-room-create.vue';
 
-import Cmp from '../components/room/app-cmp.vue';
 
 export default {
   name: 'home',
@@ -43,7 +41,6 @@ export default {
     'app-create-task': createTask,
     'app-task-list': taskList,
     'app-create-room': createRoom,
-    'app-cmp': Cmp 
   }
 }
 </script>

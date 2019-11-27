@@ -1,9 +1,9 @@
 <template>
 	<div>
     <v-toolbar dense>
-			<v-toolbar-items class="pl-0" v-if="roomUsers.length !== 0">
+			<v-toolbar-items class="pl-0 elevation-0" v-if="roomUsers.length !== 0">
         <v-btn text v-for="(user, index) in roomUsers" :key="index"> 
-					<v-icon :color="user.status">mdi-account</v-icon>
+					<v-icon color="success">mdi-account</v-icon>
 					{{user.name}}
 				</v-btn>
       </v-toolbar-items>
@@ -12,19 +12,16 @@
 		
 
       <template v-if="$vuetify.breakpoint.smAndUp">
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isCreator">
 					<template v-slot:activator="{ on }">
-						<v-btn icon v-on="on" @click="copyInviteLink">
-							<v-icon>mdi-export-variant</v-icon>
+						<v-btn v-on="on" text @click="copyInviteLink">
+							Copy Invite Link
 						</v-btn>
 					</template>
-					<span>Copy Invite Link</span>
+					<span>{{getInviteLink}}</span>
 				</v-tooltip>
-        <v-btn icon>
-          <v-icon>mdi-delete-circle</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>mdi-plus-circle</v-icon>
+        <v-btn @click="leaveRoom" text v-if="isConnected">
+          Leave Room
         </v-btn>
       </template>
     </v-toolbar>
@@ -33,7 +30,7 @@
 
 <script>
 export default {
-	props: ['inviteLink', 'role'],
+	props: ['inviteLink'],
 	data: () => ({
 
 	}),
@@ -42,17 +39,28 @@ export default {
 	},
 	computed: {
 		roomUsers: function() {
-			return [{name: 'Yehor', status: 'success'}, {name: 'Andrey', status: 'warning'}]
+			return this.$store.state.room.room.users;
+		},
+		getInviteLink: function() {
+			return `${location.href}?${this.inviteLink}`;
+		},
+		isCreator: function() {
+			return this.$store.state.room.isCreator;
+		},
+		isConnected: function(){
+			return this.$store.state.room.connected;
 		}
 	},
 	methods: {
 		copyInviteLink: function() {
-			let inviteUrl = `${location.href}?${this.inviteLink}`;
-			navigator.clipboard.writeText(inviteUrl)
+			navigator.clipboard.writeText(this.getInviteLink)
 				.then(() => {
 					this.$store.dispatch('addGlobalMessage', {text: 'Invite link successfully copied to clipboard', type: 'success'});
 				})
 				.catch((err) => {this.$store.dispatch('addGlobalMessage', {text: err.message, type: 'error'});})
+		},
+		leaveRoom: function() {
+			this.$socket.emit('exit-room');
 		}
 	}
 }
