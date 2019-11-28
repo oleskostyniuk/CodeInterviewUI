@@ -1,24 +1,21 @@
 <template>
-<div>
-  <div class="webRTC d-flex">
-    <div class="webRTC_video d-flex">
-      <div class="no-video" v-show="!localStream">
-
+<div class="video-wrapper">
+  <div class="webRTC" :class="{'active-call': remoteStream}">
+      <div class="video pa-2">
+        <video  
+          id="local_video"
+          playsinline
+          autoplay
+          muted></video>
       </div>
-      <video  
-      id="local_video" 
-      playsinline 
-      autoplay
-      muted></video>
-    </div>
 
-    <div class="webRTC_video d-flex">
-      <video v-show="remoteStream"
-        id="remoteVideo" 
-        playsinline class="ml-2"
+      <div class="video pa-2">
+        <video 
+        id="remoteVideo"
+        playsinline
         autoplay muted></video>
-        <div class="no-video" v-if="!remoteStream"></div>
-    </div>
+      </div>
+      
   </div>
 </div>
   
@@ -32,6 +29,7 @@ export default {
       localStream: null,
       remoteStream: null,
       peerConnection: null,
+      connection: null,
       call: null
     }
   },
@@ -40,7 +38,6 @@ export default {
         this.startCall();
       },
       'end-video': function() {
-        debugger
         this.peerConnection.disconnect();
         this.endConnection();
       } 
@@ -49,9 +46,9 @@ export default {
     startCall: async function() {
       const self = this;
       let peerId = location.search.slice(1);
-      this.peerConnection.connect(peerId);
-      this.call = await this.peerConnection.call(peerId, this.localStream)
-      this.call.on('stream', function(stream) {
+      this.connection = this.peerConnection.connect(peerId);
+      let call = await this.peerConnection.call(peerId, this.localStream);
+      call.on('stream', function(stream) {
         document.getElementById("remoteVideo").srcObject = stream;
         self.remoteStream = stream;
       });
@@ -82,40 +79,50 @@ export default {
   created () {
     let Peer = window.peerjs.Peer;
     this.initConnection();
-    if(this.$store.state.auth.currentUser._id) {
-      this.peerConnection = new Peer([this.$store.state.auth.currentUser._id]); 
-    } else {
-      this.peerConnection = new Peer();
-    }
-    this.peerConnection.on('call', call => {
-      call.answer(this.localStream);
-      this.call = call;
-      this.call.on('stream', function(stream) {
+    this.peerConnection = new Peer();
+    const self = this;
+
+    this.peerConnection.on('open', function(id) {
+      self.$emit('peer-id', id);
+    }); 
+    this.peerConnection.on('connection', dataConnection => {
+      this.connection = dataConnection;
+      console.log(this.connection, dataConnection);
+    });
+    this.peerConnection.on('call',async call => {
+      console.log(1);
+      call.answer(self.localStream);
+      call.on('stream', function(stream) {
         document.getElementById("remoteVideo").srcObject = stream;
+        self.remoteStream = stream;
       });
     });
-    // this.peerConnection.on('close', () => {
-    //   this.peerConnection.disconnect();
-    //   this.endConnection();
-    // });
   }
 }
 </script>  
 
 <style>
-.webRTC{
-  display: flex;
+.video-wrapper{
+  position: relative;
   width: 100%;
-  justify-content: flex-end;
-}  
-.webRTC_video > video {
-  display: flex;
-  max-width: 25%;
 }
-.webRTC_video > .no-video {
+.webRTC{
+  position: absolute;
   display: flex;
-  width: 25%;
-  height: 100%;
-  background: #000000;
+  flex-direction: row;
+  width: 50%;
+  right: 0;
+  z-index: -1;
+}  
+.webRTC > .video {
+  display: flex;
+  max-width: 50%;
+  border: 1px solid white;
+}
+video{
+  max-width: 100%
+}
+.active-call{
+  z-index: 10 !important;
 }
 </style>

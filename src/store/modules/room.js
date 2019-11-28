@@ -38,7 +38,7 @@ const actions = {
 		commit('SET_ROOM', room);
 	},
 	sendCode: function({commit}, code) {
-		return axios.post('/code', code)
+		return axios.post('/judge/code', code)
 			.then(res => {
 				commit('SET_CODE_OUTPUT', res.data);
 				return res.data;
