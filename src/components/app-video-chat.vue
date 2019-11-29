@@ -1,6 +1,6 @@
 <template>
-<div class="video-wrapper">
-  <div class="webRTC" :class="{'active-call': remoteStream}">
+<div class="video-wrapper" :class="{'active-call': remoteStream}">
+  <div class="webRTC ml-auto mr-2 mt-1">
       <div class="video pa-2">
         <video  
           id="local_video"
@@ -34,13 +34,13 @@ export default {
     }
   },
   sockets: {
-      'start-video': function() {
-        this.startCall();
-      },
-      'end-video': function() {
-        this.peerConnection.disconnect();
-        this.endConnection();
-      } 
+    'start-video': function() {
+      this.startCall();
+    },
+    'end-video': function() {
+      this.peerConnection.disconnect();
+      this.endConnection();
+    } 
   },
   methods: {
     startCall: async function() {
@@ -103,18 +103,18 @@ export default {
 
 <style>
 .video-wrapper{
-  position: relative;
+  height: 0;
   width: 100%;
+  z-index: -1;
+
 }
 .webRTC{
-  position: absolute;
   display: flex;
   flex-direction: row;
   width: 50%;
-  right: 0;
-  z-index: -1;
 }  
 .webRTC > .video {
+  flex-direction: column;
   display: flex;
   max-width: 50%;
   border: 1px solid white;
@@ -124,5 +124,6 @@ video{
 }
 .active-call{
   z-index: 10 !important;
+  height: auto;
 }
 </style>

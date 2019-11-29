@@ -5,7 +5,7 @@
 		<app-room-modal @name-setted="setName($event)" :dialog="showEnterDialog"></app-room-modal>
 		<app-room-finish :dialog="showFinishDialog"></app-room-finish>
 		<app-room-toobar :invite-link="inviteLink"></app-room-toobar>
-		<v-layout class="room flex-wrap h-auto">
+		<v-layout class="room flex-wrap">
       <v-flex xs12 d-flex md6>
 				<app-code-editor width="100%"
 					height="100%"
@@ -15,7 +15,7 @@
 					@input="onChange"></app-code-editor>
       </v-flex>
 
-			<v-flex xs12 d-flex md6 class="room-panel">
+			<v-flex xs12 d-flex md6 class="room-panel" :style="{'justify-content': !isConnected ? 'center': ''}">
 				<app-video-chat @peer-id="setInviteLink($event)"></app-video-chat>
 
 				<div class="mx-auto px-5 loading-circ" v-if="isCreator && !isConnected" loading>
@@ -28,9 +28,10 @@
 					></v-progress-circular>
 						<span class="d-block my-3 title">Waiting for opponent</span>
 				</div>
-				<div v-else-if="isConnected" class="mx-2 loading-circ desc">
+			
+				<v-layout v-else-if="isConnected" wrap class="mx-2 desc">
 					<app-code-output :code="code"></app-code-output>
-				</div>
+				</v-layout>
 			</v-flex>
 			
     </v-layout>
@@ -68,7 +69,6 @@ export default {
 		},
 		'partner-connected': function() {
 			this.isConnected = true;
-			debugger;
 			if(this.isCreator) {
 				this.$socket.emit('send-room-info', this.$store.state.room.room);
 			}
@@ -143,6 +143,13 @@ export default {
 		setInviteLink: function(link) {
 			if(this.checkRole()) {
 				this.inviteLink = link;
+				const self = this;
+				this.$socket.emit('create-room', this.inviteLink, function() {
+					self.handleEvent('Room created', 'success');
+				});
+				this.$store.dispatch('setCreator', true);
+				let room = {name: this.inviteLink, users: [{name: this.$store.state.auth.currentUser.firstName}], language_id: 29 };
+				this.$store.dispatch('SOCKET_SET_ROOM', room);
 			}
 		},
 		checkRole: function() {
@@ -157,29 +164,20 @@ export default {
 			}
 		},
 	},
-	created() {
+	async created() {
 		const self = this;
-		this.$store.dispatch('getMe')
-			.then(() => {
-				if(self.checkRole()) {
-					self.$socket.emit('create-room', self.inviteLink, function() {
-						self.handleEvent('Room created', 'success');
-					});
-					self.$store.dispatch('setCreator', true);
-					let room = {name: self.inviteLink, users: [{name: self.$store.state.auth.currentUser.firstName}]};
-					self.$store.dispatch('SOCKET_SET_ROOM', room);
-				} else {
-					self.showEnterDialog = true;
-				}
-			})
-		;
+		if(!self.checkRole()) {
+			self.showEnterDialog = true;
+		}
 	},
 }
 </script>
 
 <style scoped>
 .room{
-	height: calc(100vh - 30px);
+	height: 100vh;
+	overflow: hidden;
+	max-height: calc(100vh - 30px);
 }
 .desc{
 	background: #1e1e1e;
@@ -193,7 +191,7 @@ export default {
 	border-left: 5px solid black;
 }
 .loading-circ{
-	margin-top: 30%;
+	/* margin-top: 45%; */
 }
 </style>
 

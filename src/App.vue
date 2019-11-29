@@ -16,6 +16,7 @@ export default {
     //
   }),
   created() {
+    this.$store.dispatch('getLanguagesList');
     let jwt = localStorage.getItem('user');
     if(jwt) {
       jwt = JSON.parse(jwt);

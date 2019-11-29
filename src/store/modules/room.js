@@ -2,10 +2,11 @@ import axios from '../axios.js';
 
 
 const state = {
-	room: { name: '', users: [], tasks: [] },  
+	room: { name: '', users: [], tasks: [], language_id: null },  
 	isCreator: false,
 	codeOutput: null,
-	connected: false
+	connected: false,
+	languagesList: []
 };
 const mutations = { 
 	'SET_ROOM': function(state, room) {
@@ -31,6 +32,9 @@ const mutations = {
 		state.room = { name: '', users: [], tasks: [] };
 		state.codeOutput = null;
 		state.connected = false;
+	},
+	'SET_LANG_LIST': function(state, langList) {
+		state.languagesList = langList;
 	}
 }
 const actions = {
@@ -60,11 +64,24 @@ const actions = {
 	},
 	disconnectRoom: function({commit}) {
 		commit('DISCONNECT_ROOM');
+	},
+	getLanguagesList: function({commit}) {
+		return axios.get('https://api.judge0.com/languages')
+			.then(res => {
+				commit('SET_LANG_LIST', res.data);
+			})
 	}
 };
+
+const getters = {
+	getLanguageById: state => {
+    return state.languagesList.length && state.room.language_id ? state.languagesList.find(lang => lang.id === state.room.language_id) : null;
+  }
+}
 
 export default {
 	state,
 	mutations,
-	actions
+	actions,
+	getters
 };
